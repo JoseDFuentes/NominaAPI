@@ -67,14 +67,15 @@ function getPuestos($id = null, $idEmpresa = null) {
 function createPuesto($data) {
     $conn = getConnection();
     try {
-        $stmt = $conn->prepare("INSERT INTO Puestos (IdPuesto, SalarioBase, Activo, IdEmpresa) VALUES (?, ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO Puestos (IdPuesto, SalarioBase, Activo, Descripcion, IdEmpresa) VALUES (?, ?, ?, ?, ?)");
 
         $activo = isset($data['Activo']) ? $data['Activo'] : 1;
 
-        $stmt->bind_param("sdis",
+        $stmt->bind_param("sdiss",
             $data['IdPuesto'],
             $data['SalarioBase'],
             $activo,
+            $data['Descripcion'],
             $data['IdEmpresa']
         );
 
@@ -96,12 +97,13 @@ function createPuesto($data) {
 function updatePuesto($id, $data) {
     $conn = getConnection();
     try {
-        $stmt = $conn->prepare("UPDATE Puestos SET SalarioBase=?, Activo=?, IdEmpresa=? WHERE IdPuesto=?");
+        $stmt = $conn->prepare("UPDATE Puestos SET SalarioBase=?, Activo=?, IdEmpresa=?, Descripcion=? WHERE IdPuesto=?");
 
-        $stmt->bind_param("diss",
+        $stmt->bind_param("disss",
             $data['SalarioBase'],
             $data['Activo'],
             $data['IdEmpresa'],
+            $data['Descripcion'],
             $id
         );
 
