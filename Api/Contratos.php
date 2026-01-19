@@ -38,14 +38,22 @@ function getContratos($id = null, $idEmpresa = null, $idEmpleado = null) {
     $conn = getConnection();
     try {
         if ($id) {
-            $stmt = $conn->prepare("SELECT * FROM Contratos WHERE IdContrato = ? AND IdEmpresa = ?");
+            $stmt = $conn->prepare("SELECT Contratos.*, Puestos.Descripcion as Puesto, 
+            CONCAT(Empleados.Nombres, ' ', Empleados.Apellidos) as Empleado FROM Contratos
+             INNER JOIN Puestos ON Contratos.IdPuesto = Puestos.IdPuesto
+             INNER JOIN Empleados ON Contratos.IdEmpleado = Empleados.IdEmpleado
+             WHERE IdContrato = ? AND Contratos.IdEmpresa = ?");
             $stmt->bind_param("ss", $id, $idEmpresa);
             $stmt->execute();
             $result = $stmt->get_result();
             $data = $result->fetch_assoc();
             $stmt->close();
         } elseif ($idEmpleado) {
-            $stmt = $conn->prepare("SELECT * FROM Contratos WHERE IdEmpleado = ? AND IdEmpresa = ? ORDER BY FechaInicio DESC");
+            $stmt = $conn->prepare("SELECT Contratos.*, Puestos.Descripcion as Puesto, 
+            CONCAT(Empleados.Nombres, ' ', Empleados.Apellidos) as Empleado FROM Contratos
+             INNER JOIN Puestos ON Contratos.IdPuesto = Puestos.IdPuesto
+             INNER JOIN Empleados ON Contratos.IdEmpleado = Empleados.IdEmpleado
+             WHERE Contratos.IdEmpleado = ? AND Contratos.IdEmpresa = ? ORDER BY FechaInicio DESC");
             $stmt->bind_param("ss", $idEmpleado, $idEmpresa);
             $stmt->execute();
             $result = $stmt->get_result();
@@ -55,7 +63,11 @@ function getContratos($id = null, $idEmpresa = null, $idEmpleado = null) {
             }
             $stmt->close();
         } else {
-            $stmt = $conn->prepare("SELECT * FROM Contratos WHERE IdEmpresa = ? ORDER BY IdContrato ASC");
+            $stmt = $conn->prepare("SELECT Contratos.*, Puestos.Descripcion as Puesto, 
+            CONCAT(Empleados.Nombres, ' ', Empleados.Apellidos) as Empleado FROM Contratos
+             INNER JOIN Puestos ON Contratos.IdPuesto = Puestos.IdPuesto
+             INNER JOIN Empleados ON Contratos.IdEmpleado = Empleados.IdEmpleado
+             WHERE Contratos.IdEmpresa = ?  ORDER BY IdContrato ASC");
             $stmt->bind_param("s", $idEmpresa);
             $stmt->execute();
             $result = $stmt->get_result();
